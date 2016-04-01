@@ -74,6 +74,9 @@ public:
   parse(const std::string& uri);
 
 public: // scheme-specific construction
+  // construct DTN FaceUri
+  FaceUri(uint16_t endpointId, uint16_t port);
+
   /// construct udp4 or udp6 canonical FaceUri
   explicit
   FaceUri(const boost::asio::ip::udp::endpoint& endpoint);

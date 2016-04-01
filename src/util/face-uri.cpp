@@ -107,6 +107,15 @@ FaceUri::parse(const std::string& uri)
   return true;
 }
 
+// For DTN faces
+FaceUri::FaceUri(uint16_t endpointId, uint16_t port)
+  : m_isV6(false)
+{
+  m_scheme = "dtn";
+  m_host = boost::lexical_cast<std::string>(endpointId);
+  m_port = boost::lexical_cast<std::string>(port);
+}
+
 FaceUri::FaceUri(const boost::asio::ip::udp::endpoint& endpoint)
 {
   m_isV6 = endpoint.address().is_v6();
