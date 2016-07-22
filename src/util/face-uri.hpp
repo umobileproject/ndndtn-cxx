@@ -76,6 +76,7 @@ public:
 public: // scheme-specific construction
   // construct DTN FaceUri
   FaceUri(uint16_t endpointId, uint16_t port);
+  FaceUri(const std::string &endpointPrefix, const std::string &endpointAffix);
 
   /// construct udp4 or udp6 canonical FaceUri
   explicit

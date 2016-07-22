@@ -107,7 +107,7 @@ FaceUri::parse(const std::string& uri)
   return true;
 }
 
-// For DTN faces
+// For DTN faces >>>
 FaceUri::FaceUri(uint16_t endpointId, uint16_t port)
   : m_isV6(false)
 {
@@ -115,6 +115,16 @@ FaceUri::FaceUri(uint16_t endpointId, uint16_t port)
   m_host = boost::lexical_cast<std::string>(endpointId);
   m_port = boost::lexical_cast<std::string>(port);
 }
+
+FaceUri::FaceUri(const std::string &endpointPrefix, const std::string &endpointAffix)
+  : m_isV6(false)
+{
+  m_scheme = "dtn";
+  m_host = endpointPrefix;
+  m_port = endpointAffix;
+}
+
+// For DTN faces <<<
 
 FaceUri::FaceUri(const boost::asio::ip::udp::endpoint& endpoint)
 {
@@ -396,7 +406,6 @@ protected:
 class TcpCanonizeProvider : public IpHostCanonizeProvider<boost::asio::ip::tcp>
 {
 public:
-public:
   TcpCanonizeProvider()
     : IpHostCanonizeProvider("tcp")
   {
@@ -456,10 +465,51 @@ public:
   }
 };
 
+class DTNCanonizeProvider : public CanonizeProvider
+{
+public:
+	DTNCanonizeProvider()
+	{
+
+	}
+
+	virtual std::set<std::string>
+	getSchemes() const
+	{
+		std::set<std::string> schemes;
+		schemes.insert("dtn");
+		return schemes;
+	}
+
+	virtual bool
+	isCanonical(const FaceUri& faceUri) const
+	{
+		return true;
+	}
+
+	virtual void
+	canonize(const FaceUri& faceUri,
+		   const FaceUri::CanonizeSuccessCallback& onSuccess,
+		   const FaceUri::CanonizeFailureCallback& onFailure,
+		   boost::asio::io_service& io, const time::nanoseconds& timeout) const
+	{
+	  if (this->isCanonical(faceUri)) {
+		  onSuccess(faceUri);
+		  return;
+	  }
+
+	  // Add actual checking for well-formed dtn address
+	  onSuccess(faceUri);
+	}
+protected:
+
+};
+
 typedef boost::mpl::vector<
     UdpCanonizeProvider*,
     TcpCanonizeProvider*,
-    EtherCanonizeProvider*
+    EtherCanonizeProvider*,
+	DTNCanonizeProvider*
   > CanonizeProviders;
 typedef std::map<std::string, shared_ptr<CanonizeProvider> > CanonizeProviderTable;
 
