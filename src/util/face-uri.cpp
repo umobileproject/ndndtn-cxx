@@ -121,7 +121,7 @@ FaceUri::FaceUri(const std::string &endpointPrefix, const std::string &endpointA
 {
   m_scheme = "dtn";
   m_host = endpointPrefix;
-  m_port = endpointAffix;
+  m_path = endpointAffix;
 }
 
 // For DTN faces <<<
